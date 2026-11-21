@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Extractor</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        :root {
+            --bg: #0f0f13;
+            --card: #1a1a22;
+            --border: #2a2a35;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --text: #f4f4f5;
+            --text-muted: #a1a1aa;
+            --success: #22c55e;
+            --error: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 640px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .input-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        input[type="url"] {
+            flex: 1;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px 16px;
+            color: var(--text);
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input[type="url"]:focus {
+            border-color: var(--primary);
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 0 24px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+
+        button:hover:not(:disabled) {
+            background: var(--primary-hover);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .status {
+            display: none;
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+        }
+
+        .status.loading {
+            display: block;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            color: #a5b4fc;
+        }
+
+        .status.error {
+            display: block;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+        }
+
+        .status.success {
+            display: block;
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: #86efac;
+        }
+
+        .result {
+            display: none;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        .result.visible {
+            display: block;
+        }
+
+        .video-info {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .video-info img {
+            width: 140px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            background: var(--bg);
+        }
+
+        .video-meta h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+
+        .video-meta p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--success);
+            color: #052e16;
+            padding: 12px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: opacity 0.2s;
+        }
+
+        .download-btn:hover {
+            opacity: 0.9;
+        }
+
+        .warning {
+            margin-top: 32px;
+            padding: 16px;
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 12px;
+            font-size: 0.8rem;
+            color: #fca5a5;
+            line-height: 1.5;
+        }
+
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Video Extractor</h1>
+            <p>Colle une URL YouTube, TikTok, Instagram… et télécharge la vidéo</p>
+        </header>
+
+        <div class="card">
+            <div class="input-group">
+                <input type="url" id="url" placeholder="https://www.youtube.com/watch?v=..." autocomplete="off">
+                <button id="extractBtn" onclick="extractVideo()">Extraire</button>
+            </div>
+
+            <div id="status" class="status"></div>
+
+            <div id="result" class="result">
+                <div class="video-info">
+                    <img id="thumbnail" src="" alt="Miniature">
+                    <div class="video-meta">
+                        <h3 id="title"></h3>
+                        <p id="duration"></p>
+                    </div>
+                </div>
+                <a id="downloadLink" class="download-btn" href="#" download>
+                    ↓ Télécharger la vidéo
+                </a>
+            </div>
+        </div>
+
+        <div class="warning">
+            ⚠️ <strong>Avertissement légal :</strong> N’utilisez cet outil que pour du contenu dont vous possédez les droits ou qui est libre de droits. 
+            Le téléchargement de contenus protégés par le droit d’auteur sans autorisation est illégal. 
+            Vous êtes seul responsable de l’utilisation que vous en faites.
+        </div>
+    </div>
+
+    <footer>
+        Prototype éducatif • Non destiné à un usage commercial
+    </footer>
+
+    <script>
+        async function extractVideo() {
+            const urlInput = document.getElementById('url');
+            const btn = document.getElementById('extractBtn');
+            const status = document.getElementById('status');
+            const result = document.getElementById('result');
+
+            const url = urlInput.value.trim();
+            if (!url) {
+                showStatus('Veuillez entrer une URL', 'error');
+                return;
+            }
+
+            result.classList.remove('visible');
+            btn.disabled = true;
+            btn.textContent = 'Extraction...';
+            showStatus('Extraction en cours, veuillez patienter...', 'loading');
+
+            try {
+                const response = await fetch('/extract', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Erreur inconnue');
+                }
+
+                document.getElementById('title').textContent = data.title;
+                document.getElementById('thumbnail').src = data.thumbnail || '';
+                
+                if (data.duration) {
+                    const min = Math.floor(data.duration / 60);
+                    const sec = data.duration % 60;
+                    document.getElementById('duration').textContent = `${min} min ${sec.toString().padStart(2, '0')} s`;
+                } else {
+                    document.getElementById('duration').textContent = '';
+                }
+
+                const downloadLink = document.getElementById('downloadLink');
+                downloadLink.href = data.download_url;
+                downloadLink.download = data.filename;
+
+                result.classList.add('visible');
+                showStatus('Vidéo prête !', 'success');
+
+            } catch (err) {
+                showStatus(err.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Extraire';
+            }
+        }
+
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = 'status ' + type;
+        }
+
+        document.getElementById('url').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') extractVideo();
+        });
+    </script>
+</body>
+</html>
