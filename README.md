@@ -13,35 +13,10 @@ Ce projet est fourni **uniquement à des fins éducatives**.
 - Vous êtes **entièrement responsable** de l’usage que vous faites de cet outil.
 - Ne l’hébergez pas publiquement si vous n’êtes pas prêt à gérer les risques juridiques (DMCA, etc.).
 
-## Prérequis
 
-- Python 3.10 ou supérieur
-- `pip`
 
-## Installation
 
-```bash
-# 1. Cloner / télécharger le projet
-cd video-extractor
 
-# 2. Créer un environnement virtuel (recommandé)
-python -m venv venv
-source venv/bin/activate        # Linux / macOS
-# ou
-venv\Scripts\activate           # Windows
-
-# 3. Installer les dépendances
-pip install -r requirements.txt
-```
-
-## Lancement
-
-```bash
-python app.py
-```
-
-Ouvre ensuite ton navigateur sur :  
-→ **http://127.0.0.1:5000**
 
 ## Fonctionnement
 
@@ -50,24 +25,9 @@ Ouvre ensuite ton navigateur sur :
 3. La vidéo est stockée temporairement (supprimée automatiquement après 1 heure)
 4. Un lien de téléchargement est proposé à l’utilisateur
 
-## Déploiement (optionnel)
 
-Tu peux déployer facilement sur :
-- [Railway](https://railway.app)
-- [Render](https://render.com)
-- [Fly.io](https://fly.io)
-- Un VPS classique (avec gunicorn)
 
-Exemple avec gunicorn :
-```bash
-gunicorn -w 2 -b 0.0.0.0:5000 app:app
-```
 
-## Limitations
-
-- Pas de gestion des playlists
-- Pas de choix de qualité (prend le meilleur format mp4)
-- Les fichiers sont stockés temporairement sur le serveur
 - Certaines plateformes peuvent bloquer les extractions massives
 
 ## Améliorations possibles
