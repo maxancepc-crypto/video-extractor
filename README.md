@@ -1,7 +1,7 @@
 # Video Extractor
 
 Adrese url   (https://video-extractor-scfk.onrender.com/)
-Prototype simple d’extraction de vidéos à partir d’une URL (YouTube, TikTok, Instagram, etc.).
+Prototype simple d’extraction de vidéos à partir d’une URL Tokividéo et bientot youtube instagram et tiktok.
 
 ## ⚠️ Avertissement légal
 
